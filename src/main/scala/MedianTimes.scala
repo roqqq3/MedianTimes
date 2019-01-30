@@ -1,9 +1,13 @@
 import com.github.nscala_time.time.Imports._
 import org.joda.time.format.DateTimeFormatter
+
 import scala.collection.mutable
 import scala.util.{Success, Try}
 import com.github.tototoshi.csv._
 import java.io._
+
+import com.github.nscala_time.time.Imports
+
 import scala.io.BufferedSource
 
 object MedianTimes extends App {
@@ -41,7 +45,7 @@ object MedianTimes extends App {
       DD-MM-YY
       DD-MM-YYYY
       YYYY-MM-DD */
-  private def parseDate(dateString: String, timeString: String) = {
+  private def parseDate(dateString: String, timeString: String): Option[(Imports.LocalDateTime, Imports.LocalDateTime)] = {
     val dateData: Array[String] = dateString.split("-")
     val timeData: Array[String] = timeString.split("-")
     //sets a pattern for parsing date based on the string
