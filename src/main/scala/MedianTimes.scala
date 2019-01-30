@@ -14,7 +14,7 @@ object MedianTimes extends App {
     val pickupData: Try[Map[String, Array[Array[String]]]] = readPickupData(args(0))
     if (pickupData.isSuccess && day.isDefined) {
       //parses the data and calculates the median pickup times for each location
-      val parsedData: Try[Array[(String, Int)]] = parsePickupData(pickupData.get, day.get)
+      val parsedData: Try[Array[(Int, Int)]] = parsePickupData(pickupData.get, day.get)
       //writes the data to a csv if parsing is successful
       parsedData.map(writeData(_, args(0) + "/" + args(3))) match {
         case _ @ Success(Success(_)) => println("Successfully calculated median times!")
@@ -25,13 +25,13 @@ object MedianTimes extends App {
     }
   }
 
-  private def writeData(data: Array[(String, Int)], fileName: String) =
+  private def writeData(data: Array[(Int, Int)], fileName: String) =
     Try {
       val file: File = new File(s"data/$fileName")
       CSVWriter.open(file)
     }.map{ csvWriter =>
       Try {
-        val formattedData: Seq[Seq[String]] = data.map(i => Seq(i._1, i._2.toString)).toSeq
+        val formattedData: Seq[Seq[Int]] = data.map(i => Seq(i._1, i._2)).toSeq
         val header: Seq[String] = Seq("location_id", "median_pickup_time")
         csvWriter.writeAll(header +: formattedData)
       }
@@ -73,7 +73,8 @@ object MedianTimes extends App {
       args(3).endsWith(".csv")
   }
 
-  private def parsePickupData(pickupData: Map[String, Array[Array[String]]], date: (LocalDateTime, LocalDateTime)) = {
+  private def parsePickupData(pickupData: Map[String, Array[Array[String]]],
+                              date: (LocalDateTime, LocalDateTime)): Try[Array[(Int, Int)]] = {
     Try {
       //filter to only include correct times
       val filtered: Map[String, Array[Array[String]]] = pickupData.map{ i =>
@@ -82,10 +83,15 @@ object MedianTimes extends App {
           iterDate >= date._1 && iterDate <= date._2
         })
       }
-      //calculate the average pickup time
+      //get the median pickup time
       filtered.map{ i =>
-        (i._1, i._2.map(_.last.toInt).sum / i._2.length)
-      }.toArray.sortBy(_._1.toInt)
+        (i._1.toInt, i._2.map(_.last.toInt).sorted match {
+          case pickups if pickups.length % 2 == 0 => //an even number of data
+            val (first, second) = pickups.splitAt(pickups.length / 2)
+            (first.last + second.head) / 2
+          case pickups => //an odd number of data
+            pickups(pickups.length / 2)
+        })}.toArray.sortBy(_._1)
     }
   }
 
