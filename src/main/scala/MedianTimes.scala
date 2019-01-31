@@ -1,13 +1,10 @@
 import com.github.nscala_time.time.Imports._
 import org.joda.time.format.DateTimeFormatter
-
 import scala.collection.mutable
 import scala.util.{Success, Try}
 import com.github.tototoshi.csv._
 import java.io._
-
 import com.github.nscala_time.time.Imports
-
 import scala.io.BufferedSource
 
 object MedianTimes extends App {
@@ -22,7 +19,7 @@ object MedianTimes extends App {
       //writes the data to a csv if parsing is successful
       parsedData.map(writeData(_, args(0) + "/" + args(3))) match {
         case _ @ Success(Success(_)) => println("Successfully calculated median times!")
-        case _ => println("Data writing failed. Pickup data may be corrupted.")
+        case _ => println("Data writing failed. No data found for given time and hour or pickup data may be corrupted.")
       }
     } else {
       println("Data file missing or invalid time format given.")
