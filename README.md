@@ -1,5 +1,5 @@
 # WoltAssignment
-My solution to the wolt 2019 summer intern coding task. Calculates the median pickup times from the CSV file given in a very safe way.
+My solution to the Wolt 2019 summer intern coding task. Calculates the median pickup times from the CSV file given in a very safe way.
 
 ## Usage
 You need [sbt](https://www.scala-sbt.org/) to run this project.
