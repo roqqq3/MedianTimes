@@ -7,6 +7,8 @@ This project is executed from the command line.
 
 Formatting:
 
+In the project directory 
+
 ```sbt run [city] [date] [hours] [output file]```
 
 For example if you wanted to get Helsinki's median pickup times from the 8th of january between the hours of 9 and 15, you'd write
